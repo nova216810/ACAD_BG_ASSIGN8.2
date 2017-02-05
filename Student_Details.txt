@@ -1,0 +1,83 @@
+
+
+Create a sample dataset and implement the below Pig commands on the same
+dataset.
+1) Concat
+2) Tokenize
+3) Sum
+4) Min
+5) Max
+6) Limit
+7) Store
+8) Distinct
+9) Flatten
+10) IsEmpty
+
+1,Rajiv,Reddy,21,9848022337,Kolkata,89
+2,siddarth,Battacharya,22,9848022338,Kolkata,78
+3,Rajesh,Khanna,22,9848022339,Pune,90
+4,Preethi,Agarwal,21,9848022330,Pune,93
+5,Trupthi,Mohanthy,23,9848022336,Bhuwaneshwar,75
+6,Archana,Mishra,23,9848022335,Chennai,87
+7,Komal,Nayak,24,9848022334,Kolkata,83
+8,Bharathi,Nambiayar,24,9848022333,Chennai,72
+
+--------------------------------------------------
+
+stud = LOAD 'Student_Details.txt' USING PigStorage(',') AS (id:int, name1:chararray, name2: chararray, age:int , phone; chararray , city: chararray, score:int);
+
+A = foreach stud generate CONCAT(name1, '_', name2);
+dump A;
+-----------------------------------------------------
+lines  = LOAD 'data.txt' AS (words:chararray);
+
+DUMP lines;
+(Here is the first string.)
+(Here is the second string.)
+(Here is the third string.)
+
+X = FOREACH lines GENERATE TOKENIZE(words);
+DUMP X;
+({(Here),(is),(the),(first),(string.)})
+({(Here),(is),(the),(second),(string.)})
+({(Here),(is),(the),(third),(string.)})
+--------------------------------------------------------
+B = group stud by city;
+C = FOREACH B GENERATE group, SUM (data.score);
+dump C;
+
+--------------------------------------------------------
+D =  FOREACH B GENERATE group, MIN(data.score);
+dump D;
+--------------------------------------------------------
+E = FOREACH B GENERATE group, MAX (data.score);
+dump E;
+--------------------------------------------------------
+F = LIMIT E 2;
+dump F;
+--------------------------------------------------------
+STORE F into MaxScore;
+--------------------------------------------------------
+
+(1,1,2,3)
+(4,4,2,1)
+(4,4,3,3)
+(8,8,3,4)
+(8,8,4,3)
+
+
+Y = FOREACH C GENERATE GROUP, FLATTEN(A.a3);
+
+DUMP Y;
+(1,3)
+(4,1)
+(4,3)
+(8,4)
+(8,3)
+---------------------------------------------------------
+G = DISTINCT stud;
+dump G;
+---------------------------------------------------------
+H = group stud by age;
+I = filter H by not IsEmpty(group);
+dump I;
